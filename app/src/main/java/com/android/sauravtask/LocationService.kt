@@ -17,10 +17,13 @@ import android.widget.RemoteViews
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+
 
 class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -28,7 +31,8 @@ class LocationService : Service() {
     var FOREGROUND_SERVICE_ID = 1
     private val NOTIFICATION_ID = 1
     private val notificationId = 1
-
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var csvManager: CSVManager
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
     private var csvWriter: BufferedWriter? = null
@@ -36,10 +40,30 @@ class LocationService : Service() {
     override fun onCreate() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
+        notificationManager = getSystemService(NotificationManager::class.java)
+        csvManager = CSVManager()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        locationRequest = LocationRequest().apply {
+            // Sets the desired interval for
+            // active location updates.
+            // This interval is inexact.
+            interval = TimeUnit.SECONDS.toMillis(60)
+
+            // Sets the fastest rate for active location updates.
+            // This interval is exact, and your application will never
+            // receive updates more frequently than this value
+            fastestInterval = TimeUnit.SECONDS.toMillis(30)
+
+            // Sets the maximum time when batched location
+            // updates are delivered. Updates may be
+            // delivered sooner than this interval
+            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         val currentTimeMillis = System.currentTimeMillis()
         val csvFileName = "location_data_$currentTimeMillis.csv"
 
@@ -110,9 +134,12 @@ class LocationService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 p0?.lastLocation?.let {
+
+                   var latitude = currentLocation?.latitude
+                    var longitude = currentLocation?.longitude
                     // Update the notification with the latest location
-                    updateNotification(it.latitude, it.longitude)
-                    //CSVFileWriter.writeToCSV(this, it.latitude, it.longitude)
+                    latitude?.let { it1 -> longitude?.let { it2 -> updateNotification(it1, it2) } }
+                    //CSVFileWriter.writeToCSV(context , it.latitude, it.longitude)
                 }
             }
         }
