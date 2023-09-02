@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/Image"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_40"
+        android:text="@string/click_image"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginStart="@dimen/dp_20"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/black"
+        android:padding="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_1"
+        android:textAppearance="@style/Widget.MaterialComponents.Button"
+        android:backgroundTint="@color/COLOR_SYMPTOM_2"
+        android:elevation="@dimen/dp_2"
+        />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:layout_width="wrap_content"
+        android:id="@+id/Switch"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="31dp"
+        android:checked="true"
+        android:text="Location" />
+
+
+</RelativeLayout>
